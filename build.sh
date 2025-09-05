@@ -6,14 +6,34 @@ set -euo pipefail
 # https://github.com/caddy-dns/route53/issues/58#issuecomment-2829589469
 
 echo ""
+echo -e "\033[1;36m[CHECK]\033[0m Dependencies"
+echo ""
+if ! command -v xcaddy >/dev/null; then
+  echo -e "\t\033[1;37m\033[41m MISSING \033[0m xcaddy (binary)"
+  go install github.com/caddyserver/xcaddy/cmd/xcaddy@latest
+else
+  echo -e "\t\033[1;30m\033[42m OK \033[0m xcaddy (binary)"
+fi
+if ! command -v make >/dev/null; then
+  echo -e "\t\033[1;37m\033[41m MISSING \033[0m make (binary)"
+  echo ""
+  echo "You'll need to install the 'build-essential' package on Ubuntu"
+  echo "or whatever provides 'make' on your OS."
+  echo ""
+  exit 1
+else
+  echo -e "\t\033[1;30m\033[42m OK \033[0m make (binary)"
+fi
+
+echo ""
 echo -e "\033[1;36m[CHECK]\033[0m route53 plugin"
 echo ""
 
 if [ ! -d route53 ]; then
-  echo -e "\033[33m[CLONE]\033[0m route53 plugin"
+  echo -e "\t\033[1;30m\033[43m CLONE \033[0m route53 plugin"
   git clone https://github.com/theAeon/route53.git
 else
-  echo -e "\033[32m[UPDATE]\033[0m route53 plugin"
+  echo -e "\t\033[1;30m\033[42m UPDATE \033[0m route53 plugin"
   git -C route53 fetch &&
     git -C route53 pull
 fi
